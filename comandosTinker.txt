@@ -1,0 +1,253 @@
+App\Role {#2922
+     name: "administrador",
+     display_name: "Administrador del Sistema",
+     description: "Administrador del Sistema",
+     updated_at: "2019-02-17 18:22:34",
+     created_at: "2019-02-17 18:22:34",
+     id: 1,
+   }
+>>> $gen = new App\Role()
+=> App\Role {#2925}
+>>> $gen->name = 'general';
+=> "general"
+>>> $owner->display_name = 'Usuario General';
+=> "Usuario General"
+>>> $owner->description = 'Usuario General';
+=> "Usuario General"
+>>> $gen->display_name = 'Usuario General';
+=> "Usuario General"
+>>> $gen->description = 'Usuario General';
+=> "Usuario General"
+>>> $gen;
+=> App\Role {#2925
+     name: "general",
+     display_name: "Usuario General",
+     description: "Usuario General",
+   }
+>>> $gen->save();
+BadMethodCallException with message 'This cache store does not support tagging.'
+>>> $dash = new App\Role()
+=> App\Role {#2934}
+>>> dash->name = 'dashboard';
+PHP Parse error: Syntax error, unexpected T_OBJECT_OPERATOR on line 1
+>>> $dash->name = 'dashboard';
+=> "dashboard"
+>>> $dash->display_name = 'dashboard';
+=> "dashboard"
+>>> $dash->description = 'dashboard';
+=> "dashboard"
+>>> $dash;
+=> App\Role {#2934
+     name: "dashboard",
+     display_name: "dashboard",
+     description: "dashboard",
+   }
+>>> $dash->save();
+BadMethodCallException with message 'This cache store does not support tagging.'
+>>>
+>>> $dash = new App\Permission()
+=> App\Permission {#2937}
+>>> $dash->name = 'dashboard';
+=> "dashboard"
+>>> $dash->display_name = 'dashboard';
+=> "dashboard"
+>>> $dash->description = 'dashboard';
+=> "dashboard"
+>>> $dash;
+=> App\Permission {#2937
+     name: "dashboard",
+     display_name: "dashboard",
+     description: "dashboard",
+   }
+>>> $dash->save();
+=> true
+>>> $administracion = new App\Permission()
+=> App\Permission {#2939}
+>>> $administracion->name = 'administracion';
+=> "administracion"
+>>> $administracion->display_name = 'administracion';
+=> "administracion"
+>>> $administracion->description = 'administracion';
+=> "administracion"
+>>> $administracion
+=> App\Permission {#2939
+     name: "administracion",
+     display_name: "administracion",
+     description: "administracion",
+   }
+>>> $administracion->save();
+=> true
+>>> $ventas = new App\Permission()
+=> App\Permission {#2938}
+>>> $ventas->name = 'ventas';
+=> "ventas"
+>>> $ventas->display_name = 'ventas';
+=> "ventas"
+>>> $ventas->description = 'ventas';
+=> "ventas"
+>>> $ventas;
+=> App\Permission {#2938
+     name: "ventas",
+     display_name: "ventas",
+     description: "ventas",
+   }
+>>> $ventas->save();
+=> true
+>>> $admin = App\Role::find(1);
+=> App\Role {#2920
+     id: 1,
+     name: "administrador",
+     display_name: "Administrador del Sistema",
+     description: "Administrador del Sistema",
+     created_at: "2019-02-17 18:22:34",
+     updated_at: "2019-02-17 18:22:34",
+   }
+>>> $dash = App\Permission::find(1);
+=> App\Permission {#2934
+     id: 1,
+     name: "dashboard",
+     display_name: "dashboard",
+     description: "dashboard",
+     created_at: "2019-02-17 18:38:27",
+     updated_at: "2019-02-17 18:38:27",
+   }
+>>> $administrador = App\Permission::find(2);
+=> App\Permission {#2928
+     id: 2,
+     name: "administracion",
+     display_name: "administracion",
+     description: "administracion",
+     created_at: "2019-02-17 18:48:10",
+     updated_at: "2019-02-17 18:48:10",
+   }
+>>> $ventas = App\Permission::find(3);
+=> App\Permission {#2942
+     id: 3,
+     name: "ventas",
+     display_name: "ventas",
+     description: "ventas",
+     created_at: "2019-02-17 18:49:17",
+     updated_at: "2019-02-17 18:49:17",
+   }
+>>> 
+>>> $a = App\Role::find(1);
+=> App\Role {#2940
+     id: 1,
+     name: "administrador",
+     display_name: "Administrador del Sistema",
+     description: "Administrador del Sistema",
+     created_at: "2019-02-17 18:22:34",
+     updated_at: "2019-02-17 18:22:34",
+   }
+>>> $a->attachPermission($dash)
+=> null
+>>> $a->attachPermission($ventas)
+=> null
+>>> $a->attachPermission($administrador)
+=> null
+>>> $b = App\Role::find(2);
+=> App\Role {#2937
+     id: 2,
+     name: "general",
+     display_name: "Usuario General",
+     description: "Usuario General",
+     created_at: "2019-02-17 18:25:52",
+     updated_at: "2019-02-17 18:25:52",
+   }
+>>> $b->attachPermission($ventas)
+=> null
+>>> $erase = new App\Role()
+=> App\Role {#2951}
+>>> $erase->name = 'ventas';
+=> "ventas"
+>>> $erase->display_name = 'ventas';
+=> "ventas"
+>>> $erase->description = 'administracion';
+=> "administracion"
+>>> $erase;
+=> App\Role {#2951
+     name: "ventas",
+     display_name: "ventas",
+     description: "administracion",
+BadMethodCallException with message 'This cache store does not support tagging.'
+>>> $erase->delete();
+BadMethodCallException with message 'This cache store does not support tagging.'
+>>> $erase->name = 'erase';
+=> "erase"
+>>> $erase->display_name = 'ventas';
+=> "ventas"
+>>> $erase->description = 'administracion';
+=> "administracion"
+>>> $erase;
+=> App\Role {#2951
+     name: "erase",
+     display_name: "ventas",
+     description: "administracion",
+     updated_at: "2019-02-17 23:10:22",
+     created_at: "2019-02-17 23:10:22",
+     id: 4,
+   }
+>>> $erase->save();
+BadMethodCallException with message 'This cache store does not support tagging.'
+>>>
+PS E:\xamp_app\htdocs\mis_sistemas\laravel\wsLogin\wsv3> php artisan tinker
+Psy Shell v0.9.9 (PHP 7.2.6 — cli) by Justin Hileman
+>>> $erase = App\Role::find(4);
+=> App\Role {#2932
+     id: 4,
+     name: "erase",
+     display_name: "ventas",
+     description: "administracion",
+     created_at: "2019-02-17 23:12:23",
+     updated_at: "2019-02-17 23:12:23",
+   }
+>>> $erase->delete();
+=> true
+>>> $erase = new App\Role()
+=> App\Role {#2937}
+>>> $erase->name = 'erase';
+=> "erase"
+>>> $erase->save();
+=> true
+>>> $erase->delete();
+=> true
+>>> cls
+PHP Warning:  Use of undefined constant cls - assumed 'cls' (this will throw an Error in a future version of PHP) in Psy Shell code on line 1
+>>> cls
+PHP Warning:  Use of undefined constant cls - assumed 'cls' (this will throw an Error in a future version of PHP) in Psy Shell code on line 1
+>>> clear
+>>> clear
+>>> exir
+PHP Warning:  Use of undefined constant exir - assumed 'exir' (this will throw an Error in a future version of PHP) in Psy Shell code on line 1>>> exit
+Exit:  Goodbye
+PS E:\xamp_app\htdocs\mis_sistemas\laravel\wsLogin\wsv3> php artisan tinker
+Psy Shell v0.9.9 (PHP 7.2.6 — cli) by Justin Hileman
+>>> $erase = new App\User()
+=> App\User {#2922}
+>>> $erase->name = 'jonnathan';
+=> "jonnathan"
+>>> $erase->apellido = 'piñero';
+=> "piñero"
+>>> $erase->descripcion = 'administrador';
+=> "administrador"
+>>> $erase->email = 'jonnathanx@gmail.com';
+=> "jonnathanx@gmail.com"
+>>> $erase->password = '123456';
+=> "123456"
+>>> $erase->activo = 0;
+=> 0
+>>> $erase;
+=> App\User {#2922
+     name: "jonnathan",
+     apellido: "piñero",
+     descripcion: "administrador",
+     email: "jonnathanx@gmail.com",
+     activo: 0,
+   }
+>>> $erase->save();
+=> true
+>>>
+
+$User = App\User::find(1);
+$Role = App\Role::find(1);
+$User->attachRole($Role);

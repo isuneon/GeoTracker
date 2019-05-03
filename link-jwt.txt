@@ -1,0 +1,15 @@
+https://blog.pusher.com/laravel-jwt/
+
+https://medium.com/@experttyce/c%C3%B3mo-crear-un-api-rest-con-laravel-5-7-y-jwt-token-94b79c533c6d
+https://github.com/experttyce/laravel-api-rest-jwt
+
+
+https://tutsforweb.com/restful-api-in-laravel-56-using-jwt-authentication/
+
+
+http://self-issued.info/docs/draft-ietf-oauth-json-web-token.html#rfc.section.4.1.7
+
+
+http://programandonet.com/questions/62406/problema-de-cierre-de-sesion-con-la-autenticacion-laravel-jwt-auth
+
+https://rstopup.com/logout-problema-con-laravel-jwt-auth-autenticacion.html

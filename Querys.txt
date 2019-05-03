@@ -1,0 +1,28 @@
+CALL ObtenerConfiguracionByCliente('ISUNEON01');
+CALL ObtenerCoordenadasMovilParaMapeoOnline('ISUNEON01');
+CALL ObtenerCoordenadasMovilParaMapeoHistorico('ISUNEON01','2018-06-29','2019-06-29',1);
+CALL ObtenerCoordenadasMovilParaMapeoHistorico('ISUNEON01','2018-06-29 00:00:00','2018-06-30 00:00:00',1);
+ 
+CALL ObtenerListadoMoviles('ISUNEON01');
+CALL ObtenerListadoMoviles('TEST01');
+CALL ModificarDispositivo(1,'CELULAR DE PRUEBA','CELULAR DE PRUEBA',NULL);
+CALL InactivarDispositivo(1);
+CALL ActivarDispositivo(1);
+CALL InsertarCoordenada ('ISUNEON01','1','-346058442','-584150119','3','45','23','1','1','1','1','2019-05-03 12:15:17','2019-05-03 12:15:17');
+CALL InsertarCoordenada ('ISUNEON01','1','-346058442','-584150119',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2019-05-03 12:15:17','2019-05-03 12:15:17');
+CALL InsertarCoordenada ('ISUNEON01','1','-346058442','-584150119',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2019-05-03 12:15:17',NULL);
+CALL InsertarCoordenada ('ISUNEON01','4e0ba7c308cc40e7','-346058442','-584150119',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+
+	SELECT * FROM Movil m
+	WHERE 
+	m.idDispositivo = '4e0ba7c308cc40e7'
+	AND m.co_cli = 'ISUNEON01';
+	
+	
+SELECT * FROM CoordenadaActiva ca	INNER JOIN Movil m	ON ca.idMovil = m.id	WHERE m.id = 1	AND ca.borrado = 0 AND m.borrado=0;	
+SELECT * FROM Movil;
+
+SELECT c.id  ;
+SELECT * FROM  Coordenada ;c 
+INNER JOIN Movil m
+ON c.idMovil = m.id AND c.borrado = 0 AND m.borrado=0;
