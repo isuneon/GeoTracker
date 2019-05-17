@@ -65,6 +65,9 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     //Obtiene un el Listado de Moviles por Cliente
     Route::post('obtenerListadoMovilesPorCliente', 'AuthController@obtenerListadoMovilesPorCliente'); 
 
+
+ 
+
     // Faltantes
 
 
@@ -78,6 +81,15 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     // Route::get('closed', 'DataController@closed');
 });
 
+
+// Direcciones para el ws de reset password
+
+//Devuelve el un token en caso de el usuario existir en base de datos
+Route::post('resetpassword', 'APIPasswordController@resetpassword');
+//Envia token para resetear password
+Route::group(['middleware'=>['before'=>'jwt.auth']], function () {
+    Route::post('set_new_password', 'APIPasswordController@set_new_password');
+});  
 
 // Route::group([
 //     'prefix' => 'auth',

@@ -46,7 +46,7 @@ class AuthController extends Controller
             // $credentials = $request->only('email', 'password');
             // if (!$token = JWTAuth::attempt($credentials)) {
                 return response()->json([
-                    'succes' => false, 
+                    'success' => false, 
                     'tipomensaje' => 'Alert', 
                     'mensaje'=>'Autenticacion Fallida, por favor verifique los datos ingresados.'
                 ], 401);
@@ -59,7 +59,7 @@ class AuthController extends Controller
                 $user = auth()->user();
                 if ($user->borrado == 1){
                     return response()->json([
-                        'succes' => false, 
+                        'success' => false, 
                         'tipomensaje' => 'Alert', 
                         'mensaje'=>'Usuario inactivo.'
                     ], 401);
@@ -108,7 +108,7 @@ class AuthController extends Controller
 
                 return response()->json([
                     'success'       => true,
-                    'tipomensaje'   => 'Success.',
+                    'tipomensaje'   => 'success',
                     'mensaje'       => 'Autenticado.',              
                     'data'       => [
                         'token' => $token,
@@ -133,7 +133,8 @@ class AuthController extends Controller
             }
         } catch (JWTException $e) {
             return response()->json([
-                'status' => 'false'  , 
+                'success'=> false, 
+                'tipomensaje' => 'Alert', 
                 'mensaje'=>'Imposible Crear el token.'
             ], 500);
         }
@@ -160,7 +161,16 @@ class AuthController extends Controller
 
         $token = JWTAuth::fromUser($user);
 
-        return response()->json(compact('user', 'token'), 201);
+        return response()->json([
+            'success'       => true,
+            'tipomensaje'   => 'success',
+            'mensaje'       => 'Autenticado.',              
+            'data'       => [
+                'token' => $token,
+                'user' => $user]
+            ]
+        ,200);        
+        //return response()->json(compact('user', 'token'), 201);
     }
 
 
@@ -185,11 +195,21 @@ class AuthController extends Controller
             //if (!$user = JWTAuth::authenticate($request->token)) {
                 //$id = $request->$id;
                 $cliente = \DB::select('select a.* FROM users a');
+                // return response()->json([
+                //     'success' => true,
+                //     'users' => $cliente,
+                //     'id' => $id
+                //     ]);
+
                 return response()->json([
-                    'success' => true,
-                    'users' => $cliente,
-                    'id' => $id
-                    ]);
+                    'success'       => true,
+                    'tipomensaje'   => 'success',
+                    'mensaje'       => 'Autenticado.',              
+                    'data'       => [
+                        'users' => $cliente,
+                        'id' => $id]
+                    ]
+                ,200);                        
         } 
         catch (Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
 
@@ -222,12 +242,29 @@ class AuthController extends Controller
             // }
 
             if (!$user = JWTAuth::authenticate($request->token)) {
-                return response()->json(['user_not_found'], 404);
+                //return response()->json(['user_not_found'], 404);
+
+                return response()->json([
+                    'success'       => false,
+                    'tipomensaje'   => 'Danger',
+                    'mensaje'       => 'Usuario no encontrado'
+                    ]
+                ,404);                    
             }
             else{
+
+                // return response()->json([
+                //     'success' => true,
+                //     'user' => $user]);
+
                 return response()->json([
-                    'success' => true,
-                    'user' => $user]);
+                    'success'       => true,
+                    'tipomensaje'   => 'success',
+                    'mensaje'       => 'Autenticado.',              
+                    'data'       => [
+                        'user' => $user]
+                    ]
+                ,200);                 
             }            
 
         } catch (Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
@@ -254,7 +291,6 @@ class AuthController extends Controller
         // return response()->json(compact('user'));
     }
 
-
     /***************************************************************/
     
     public function obtenerCoordenadasMovilParaMapeoHistorico(Request $request)
@@ -273,34 +309,47 @@ class AuthController extends Controller
             // }
 
             if (!$user = JWTAuth::authenticate($request->token)) {
-                return response()->json(['user_not_found'], 404);
+                //return response()->json(['user_not_found'], 404);
+
+                return response()->json([
+                    'success'       => false,
+                    'tipomensaje'   => 'Danger',
+                    'mensaje'       => 'Usuario no encontrado'
+                    ]
+                ,404);                   
             }
             else{
 
 
                 /**/
                 if (is_null($request->pCo_cli) || empty($request->pCo_cli)) {
+
                     return response()->json([
                         'success'       => false,
                         'tipomensaje'   => 'Danger',
                         'mensaje'       => 'co_cli no puede estar vacio'
-                        ]);                   
+                        ]
+                    ,404);                                           
                 }
         
                 if (is_null($request->pFechaHoraDesde) || empty($request->pFechaHoraDesde)) {
+                        
                     return response()->json([
                         'success'       => false,
                         'tipomensaje'   => 'Danger',
                         'mensaje'       => 'El identificador Del Dispositivo no puede estar vacio'
-                        ]);                   
+                        ]
+                    ,404);                         
                 }
         
                 if (is_null($request->pFechaHoraHasta) || empty($request->pFechaHoraHasta)) {
+                       
                     return response()->json([
                         'success'       => false,
                         'tipomensaje'   => 'Danger',
                         'mensaje'       => 'latitud no puede estar vacio'
-                        ]);                   
+                        ]
+                    ,404);                          
                 }      
                 
                 if (is_null($request->pIdMovil) || empty($request->pIdMovil)) {
@@ -308,7 +357,8 @@ class AuthController extends Controller
                         'success'       => false,
                         'tipomensaje'   => 'Danger',
                         'mensaje'       => 'longitud no puede estar vacio'
-                        ]);                   
+                        ]
+                    ,404);                           
                 }
                      
         
@@ -344,11 +394,14 @@ class AuthController extends Controller
                                 )
                     );                      
                 } catch (\Throwable $th) {
+
                     return response()->json([
-                        'success'       => 0,
+                        'success'       => false,
                         'tipomensaje'   => 'Danger',
                         'mensaje'       => 'Excepcion no controlada',
-                        'data'          => $th]);  
+                        'data'          => $th
+                        ]
+                    ,404);
                 }
                            
                 /**/
@@ -358,10 +411,12 @@ class AuthController extends Controller
                // $now2 = $now->isoFormat('YYYY-MM-DD'); // 1/3/19 18:33
                 //$now = Carbon::now();
                 return response()->json([
-                    'success'       => 1,
+                    'success'       => true,
                     'tipomensaje'   => 'Success',
-                    'mensaje'       => 'Listado de usaurios para asociar con el telefono',
-                    'data'          => $respuesta]);                                
+                    'mensaje'       => 'Listado de coordenadas para mapeo historico',
+                    'data'          => $respuesta
+                    ]
+                ,200);                  
             }            
 
         } catch (Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
@@ -393,18 +448,24 @@ class AuthController extends Controller
         try {    
 
             if (!$user = JWTAuth::authenticate($request->token)) {
-                return response()->json(['user_not_found'], 404);
+                return response()->json([
+                    'success'       => false,
+                    'tipomensaje'   => 'Danger',
+                    'mensaje'       => 'Usuario no encontrado'
+                    ]
+                ,404);
             }
             else{
 
 
                 /**/
-                if (is_null($request->pCo_cli) || empty($request->pCo_cli)) {
+                if (is_null($request->pCo_cli) || empty($request->pCo_cli)) {                       
                     return response()->json([
                         'success'       => false,
                         'tipomensaje'   => 'Danger',
                         'mensaje'       => 'co_cli no puede estar vacio'
-                        ]);                   
+                        ]
+                    ,404);                        
                 }
         
                           
@@ -421,17 +482,21 @@ class AuthController extends Controller
                     );                      
                 } catch (\Throwable $th) {
                     return response()->json([
-                        'success'       => 0,
+                        'success'       => false,
                         'tipomensaje'   => 'Danger',
                         'mensaje'       => 'Excepcion no controlada',
-                        'data'          => $th]);  
+                        'data'          => $th
+                        ]
+                    ,404);
                 }
-                   
+                    
                 return response()->json([
-                    'success'       => 1,
+                    'success'       => true,
                     'tipomensaje'   => 'Success',
-                    'mensaje'       => 'Listado de usaurios para asociar con el telefono',
-                    'data'          => $respuesta]);                                
+                    'mensaje'       => 'Listado de Dispositivos on-Line.',
+                    'data'          => $respuesta
+                    ]
+                ,404);                    
             }            
 
         } catch (Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
@@ -471,7 +536,12 @@ class AuthController extends Controller
             // }
 
             if (!$user = JWTAuth::authenticate($request->token)) {
-                return response()->json(['user_not_found'], 404);
+                return response()->json([
+                    'success'       => false,
+                    'tipomensaje'   => 'Danger',
+                    'mensaje'       => 'Usuario no encontrado'
+                    ]
+                ,404);                 
             }
             else{
                 $data =json_decode($request->moviles, true);
@@ -507,18 +577,24 @@ class AuthController extends Controller
                     }    
 
                 } catch (\Throwable $th) {
+
                     return response()->json([
-                        'success'       => 0,
+                        'success'       => false,
                         'tipomensaje'   => 'Danger',
                         'mensaje'       => 'Excepcion no controlada',
-                        'data'          => $th]);  
+                        'data'          => $th
+                        ]
+                    ,404);                        
                 }
-                                
+
+
                 return response()->json([
-                    'success' => 1,
+                    'success'       => true,
                     'tipomensaje'   => 'Success',
-                    'mensaje'       => 'Dispositivo Inactivado con Exito',                    
-                    'data' => $respuesta]);
+                    'mensaje'       => 'Dispositivo Inactivado con Exito',
+                    'data'          => $respuesta
+                    ]
+                ,200);                    
             }            
 
         } catch (Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
@@ -542,7 +618,12 @@ class AuthController extends Controller
         try {
 
             if (!$user = JWTAuth::authenticate($request->token)) {
-                return response()->json(['user_not_found'], 404);
+                return response()->json([
+                    'success'       => false,
+                    'tipomensaje'   => 'Danger',
+                    'mensaje'       => 'Usuario no encontrado'
+                    ]
+                ,404);  
             }
             else{
                 $data =json_decode($request->moviles, true);
@@ -565,15 +646,21 @@ class AuthController extends Controller
 
                 } catch (\Throwable $th) {
                     return response()->json([
-                        'success'       => 0,
+                        'success'       => false,
                         'tipomensaje'   => 'Danger',
                         'mensaje'       => 'Excepcion no controlada',
-                        'data'          => $th]);  
+                        'data'          => $th
+                        ]
+                    ,404);
                 }
                                 
                 return response()->json([
-                    'success' => true,
-                    'user' => $respuesta]);
+                    'success'       => true,
+                    'tipomensaje'   => 'Success',
+                    'mensaje'       => 'Dispositivo Activado con Exito',
+                    'data'          => $respuesta
+                    ]
+                ,200);                       
             }            
 
         } catch (Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
@@ -597,11 +684,16 @@ class AuthController extends Controller
         try {
  
             if (!$user = JWTAuth::authenticate($request->token)) {
-                return response()->json(['user_not_found'], 404);
+                return response()->json([
+                    'success'       => false,
+                    'tipomensaje'   => 'Danger',
+                    'mensaje'       => 'Usuario no encontrado'
+                    ]
+                ,404);
             }            
             try {
                 //code...
-                $respuesta = \DB::select('select co_cli FROM vClientes a');  
+                //$respuesta = \DB::select('select co_cli FROM vClientes a');  
     
                 $lcQuery  = 'CALL ObtenerListadoMoviles (?)';                
 
@@ -614,19 +706,23 @@ class AuthController extends Controller
                   
             } catch (\Throwable $th) {
                 return response()->json([
-                    'success'       => 0,
+                    'success'       => false,
                     'tipomensaje'   => 'Danger',
                     'mensaje'       => 'Excepcion no controlada',
-                    'data'          => $th]);  
+                    'data'          => $th
+                    ]
+                ,404);
             }
                         
             // $respuesta = \DB::select($lcQuery);                
-            // Log::info($respuesta);  
+            // Log::info($respuesta);                  
             return response()->json([
-                'success'       => 1,
+                'success'       => true,
                 'tipomensaje'   => 'Success',
                 'mensaje'       => 'Listado de usaurios para asociar con el telefono',
-                'data'          => $respuesta]);              
+                'data'          => $respuesta
+                ]
+            ,200);                
 
         } catch (Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
 
@@ -678,97 +774,231 @@ class AuthController extends Controller
             // }
 
             if (!$user = JWTAuth::authenticate($request->token)) {
-                return response()->json(['user_not_found'], 404);
+                return response()->json([
+                    'success'       => false,
+                    'tipomensaje'   => 'Danger',
+                    'mensaje'       => 'Usuario no encontrado'
+                    ]
+                ,404);                 
             }
             else{
                 $jsonIN =json_decode($request->moviles, true);
                 //Log::info($data);
 
 
-                // if (is_null($request->co_cli) || empty($request->co_cli)) {
-                //     return response()->json([
-                //         'success'       => false,
-                //         'tipomensaje'   => 'Danger',
-                //         'mensaje'       => 'co_cli no puede estar vacio'
-                //         ]);                   
-                // }     
-
                 try {
                     //code...
-
-
-                    /*
-
-        $lcQuery  = 'CALL InsertarCoordenada (?,?,?,?,?,?,?,?,?,?,?,?,?)';
-        $respuesta = \DB::select(
-            $lcQuery,
-                array(
-                     $request->co_cli
-                    ,$request->idDispositivo
-                    ,$request->latitud
-                    ,$request->longitud
-                    ,$request->fecha
-                    ,$velocidad  
-                    ,$altura
-                    ,$precisionMovil  
-                    ,$orientacion  
-                    ,$odometro  
-                    ,$descripcion
-                    ,$detencion                    
-                    ,$fechaAnterior                    
-                    )
-        );
-                    */
-                    $lcQuery  = 'CALL InsertarCoordenadaPorLote (?,?,?,?,?,?,?,?,?,?,?,?,?)';
+                   
                              
-                    foreach($jsonIN AS $idMovil => $data){
-                        // Log::info($idMovil);
+                    foreach($jsonIN AS $idDispositivo => $data){
+                        // Log::info($idDispositivo);
                         // Log::info($data); 
                         // Log::info($data["latitud"]);      
                         // Log::info($data["longitud"]); 
                         // Log::info($data["fecha"]);
                       
-                        if (is_null($idMovil) || empty($idMovil)) {
-                           //Log::info("InsertarCoordenadaPorLote Numero de Movil Vacio :   ". Carbon::now());
-                           Log::info("InsertarCoordenadaPorLote Numero de Movil Vacio :   ");
+                        $velocidad  = NULL;             
+                        $altura  = NULL;     
+                        $orientacion  = NULL;     
+                        $odometro  = NULL;     
+                        $descripcion  = NULL;     
+                        $detencion  = NULL; 
+                        $fecha = NULL;      
+                        $fechaAnterior  = NULL;    
+                        $precisionMovil  = NULL;
+
+
+ 
+                        // Log::info($request->velocidad);
+
+                        if (is_null($idDispositivo) || empty($idDispositivo) ) {
+                            //Log::info("InsertarCoordenadaPorLote Numero de Movil Vacio :   ". Carbon::now());                           
+                            Log::info("InsertarCoordenadaPorLote Dispositivo no puede estar vacio ");
+                            //next;               
+
+                             return response()->json([
+                                'success'       => false,
+                                'tipomensaje'   => 'Danger',
+                                'mensaje'       => 'Dispositivo no puede estar vacio'
+                                ]
+                            ,404);                              
+                         }                        
+                     
+                        if (is_null($data["co_cli"]) || empty($data["co_cli"]) ) {
+                           //Log::info("InsertarCoordenadaPorLote Numero de Movil Vacio :   ". Carbon::now());                           
+                           Log::info("InsertarCoordenadaPorLote co_cli no puede estar vacio :   ". "Movil : " .$idDispositivo);
                            //next;               
-                           return response()->json([
-                            'success'       => 0,
-                            'tipomensaje'   => 'Danger',
-                            'mensaje'       => 'latitud no puede estar vacio'
-                            ]);                           
+                            return response()->json([
+                                'success'       => false,
+                                'tipomensaje'   => 'Danger',
+                                'mensaje'       => 'co_cli no puede estar vacio'
+                                ]
+                            ,404);                               
                         }
         
                         if (is_null($data["latitud"]) || empty($data["latitud"])) {
-                            //Log::info("InsertarCoordenadaPorLote latitud no puede estar vacio :   ". "Movil : " .$idMovil." Fecha: " . Carbon::now());
-                            Log::info("InsertarCoordenadaPorLote latitud no puede estar vacio :   ". "Movil : " .$idMovil);
+                            //Log::info("InsertarCoordenadaPorLote latitud no puede estar vacio :   ". "Movil : " .$idDispositivo." Fecha: " . Carbon::now());
+                            Log::info("InsertarCoordenadaPorLote latitud no puede estar vacio :   ". "Movil : " .$idDispositivo);
                             //next; 
+
                             return response()->json([
-                                'success'       => 0,
+                                'success'       => false,
                                 'tipomensaje'   => 'Danger',
                                 'mensaje'       => 'latitud no puede estar vacio'
-                                ]);                   
+                                ]
+                            ,404);                                  
                         }      
         
                         if (is_null($data["longitud"]) || empty($data["longitud"])) {
-                            Log::info("InsertarCoordenadaPorLote longitud no puede estar vacio :   ". "Movil : " .$idMovil);
+                            Log::info("InsertarCoordenadaPorLote longitud no puede estar vacio :   ". "Movil : " .$idDispositivo);
                            // next;
+
                             return response()->json([
-                                'success'       => 0,
+                                'success'       => false,
                                 'tipomensaje'   => 'Danger',
                                 'mensaje'       => 'longitud no puede estar vacio'
-                                ]);                   
+                                ]
+                            ,404);                                  
                         }
         
                         if (is_null($data["fecha"]) || empty($data["fecha"])) {
-                            Log::info("InsertarCoordenadaPorLote fecha no puede estar vacio :   ". "Movil : " .$idMovil);
+                            Log::info("InsertarCoordenadaPorLote fecha no puede estar vacio :   ". "Movil : " .$idDispositivo);
                            // next;
+
                             return response()->json([
-                                'success'       => 0,
+                                'success'       => false,
                                 'tipomensaje'   => 'Danger',
                                 'mensaje'       => 'fecha de usuario no puede estar vacio'
-                                ]);                   
-                        }      
+                                ]
+                            ,404);                                 
+                        }
+                        
+
+                        // Log::info($data["co_cli"]);
+                        // Log::info($data["longitud"]);
+                        // Log::info($data["latitud"]);                        
+                        // Log::info($data["fecha"]);                        
+                         
+
+
+                        $co_cli = $data["co_cli"]; 
+                        $latitud = $data["latitud"]; 
+                        $longitud = $data["longitud"]; 
+                        $fecha = $data["fecha"]; 
+                 
+
+
+                        if (!is_null($data["velocidad"]) || !empty($data["velocidad"])) {
+                           $velocidad = NULL;     
+                        }
+                        else {
+                            # code...
+                            $velocidad      = $data["velocidad"];
+                        }
+                        
+                        if (!is_null($data["altura"]) || !empty($data["altura"])) {
+                           $altura = NULL;     
+                        }
+                        else {
+                            # code...
+                            $altura         = $data["altura"];
+                        }
+
+                        if (!is_null($data["orientacion"]) || !empty($data["orientacion"])) {
+                            $orientacion = NULL;     
+                        }
+                        else {
+                            # code...
+                            $orientacion    = $data["orientacion"]; 
+                        }
+
+                        if (!is_null($data["odometro"]) || !empty($data["odometro"])) {
+                            $odometro = NULL;     
+                        }
+                        else {
+                            # code...
+                            $odometro       = $data["odometro"];
+                        }
+
+                        if (!is_null($data["descripcion"]) || !empty($data["descripcion"])) {
+                            $descripcion = NULL;     
+                        }
+                        else {
+                            # code...
+                            $descripcion    = $data["descripcion"];
+                        }
+
+                        if (!is_null($data["detencion"]) || !empty($data["detencion"])) {
+                            $detencion = NULL;     
+                        }
+                        else {
+                            # code...
+                            $detencion      = $data["detencion"]; 
+                        }
+
+                        if (!is_null($data["fechaAnterior"]) || !empty($data["fechaAnterior"])) {
+                            $fechaAnterior = NULL;     
+                        }
+                        else {
+                            # code...
+                            $fechaAnterior  = $data["fechaAnterior"];   
+                        }                         
+ 
+                        if (!is_null($data["precisionMovil"]) || !empty($data["precisionMovil"])) {
+                            $precisionMovil = NULL;     
+                        }
+                        else {
+                            # code...
+                            $precisionMovil = $data["precisionMovil"]; 
+                        }
+
+                        // $co_cli         = $data["co_cli"];                          
+                        // $latitud        = $data["latitud"]; 
+                        // $longitud       = $data["longitud"]; 
+                         
+           
+                        //$fecha          = $data["fecha"];  
+                        //$fecha = NULL;               
+                                          
+                        // return response()->json([
+                        //     'success' => 1,
+                        //     'tipomensaje'   => 'Success',
+                        //     'mensaje'       => 'Coordenadas insertadas con Exito',                    
+                        //     'data' => $latitud     
+                        // ]);  
+
+                        //$co_cli = 'ISUNEON01';
+                        // $velocidad = NULL;
+                        // $velocidad = NULL;
+                        // $altura = NULL; 
+                        // $orientacion = NULL;
+                        // $odometro = NULL; 
+                        // $descripcion = NULL; 
+                        // $detencion = NULL; 
+                        // $fechaAnterior = NULL;
+                        // $fecha = NULL;
+                        // $precisionMovil = NULL;
+
+                        //$lcQuery  = 'CALL InsertarCoordenada (?,?,?,?,?,?,?,?,?,?,?,?,?)';
+                        $lcQuery  = 'CALL InsertarCoordenadaPorLote (?,?,?,?,?,?,?,?,?,?,?,?,?)';
+                        $respuesta = \DB::select(
+                            $lcQuery,
+                                array(
+                                     $co_cli
+                                    ,$idDispositivo
+                                    ,$latitud
+                                    ,$longitud                        
+                                    ,$velocidad  
+                                    ,$altura
+                                    ,$precisionMovil  
+                                    ,$orientacion  
+                                    ,$odometro  
+                                    ,$descripcion
+                                    ,$detencion         
+                                    ,$fecha           
+                                    ,$fechaAnterior                    
+                                    )
+                        );                            
 
                         // $respuesta = $respuesta + \DB::select(
                         //     $lcQuery,
@@ -783,23 +1013,30 @@ class AuthController extends Controller
 
                 } catch (\Throwable $th) {
                     return response()->json([
-                        'success'       => 0,
+                        'success'       => false,
                         'tipomensaje'   => 'Danger',
                         'mensaje'       => 'Excepcion no controlada',
-                        'data'          => $th]);  
+                        'data'          => $th
+                        ]
+                    ,404); 
                 }
-                                
-                // return response()->json([
-                //     'success' => 1,
-                //     'tipomensaje'   => 'Success',
-                //     'mensaje'       => 'Dispositivo Inactivado con Exito',                    
-                //     'data' => $jsonIN]);
+                                               
 
-                return response()->json([
-                    'success' => 1,
-                    'tipomensaje'   => 'Success',
-                    'mensaje'       => 'Dispositivo Inactivado con Exito',                    
-                    'data' => $jsonIN]);                    
+                // return response()->json([
+                //     'success'       => true,
+                //     'tipomensaje'   => 'Success',
+                //     'mensaje'       => 'Coordenadas insertadas con Exito',                    
+                //     'data' => $respuesta
+                //     ]
+                // ,200);       
+
+                return response()->json(                
+                    [$respuesta[0]]
+                ,200);      
+                    
+
+                // return response()->json(                
+                //     $respuesta);                
             }            
 
         } catch (Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
@@ -828,65 +1065,89 @@ class AuthController extends Controller
             $respuesta = \DB::select('select co_cli FROM vClientes a');  
 
         } catch (\Throwable $th) {
+                
             return response()->json([
-                'success'       => 0,
+                'success'       => false,
                 'tipomensaje'   => 'Danger',
                 'mensaje'       => 'Excepcion no controlada',
-                'data'          => $th]);  
+                'data'          => $th
+                ]
+            ,404);                
         }
                     
         // $respuesta = \DB::select($lcQuery);                
         // Log::info($respuesta);  
+
         return response()->json([
-            'success'       => 1,
+            'success'       => true,
             'tipomensaje'   => 'Success',
-            'mensaje'       => 'Listado de usaurios para asociar con el telefono',
-            'data'          => $respuesta]);                                     
+            'mensaje'       => 'Listado de usaurios para asociar con el telefono.',
+            'data'          => $respuesta
+            ]
+        ,200);             
     }     
     public function insertarMovil(Request $request)
     {
-                
-        if (is_null($request->idDispositivo) || empty($request->idDispositivo)) {
-            return response()->json([
-                'success'       => false,
-                'tipomensaje'   => 'Danger',
-                'mensaje'       => 'El identificador Del Dispositivo no puede estar vacio'
-                ]);                   
-        }
 
-        if (is_null($request->co_cli) || empty($request->co_cli)) {
-            return response()->json([
-                'success'       => false,
-                'tipomensaje'   => 'Danger',
-                'mensaje'       => 'El codigo de usuario no puede estar vacio'
-                ]);                   
-        }            
+        try {
+            //code...
+
+            if (is_null($request->idDispositivo) || empty($request->idDispositivo)) {
+                return response()->json([
+                    'success'       => false,
+                    'tipomensaje'   => 'Danger',
+                    'mensaje'       => 'El identificador Del Dispositivo no puede estar vacio'
+                    ]
+                ,404);                  
+            }
+    
+            if (is_null($request->co_cli) || empty($request->co_cli)) {
+                return response()->json([
+                    'success'       => false,
+                    'tipomensaje'   => 'Danger',
+                    'mensaje'       => 'El codigo de usuario no puede estar vacio'
+                    ]
+                ,404);                    
+            }            
+    
+    
+            $lcQuery  = 'CALL InsertarMovil (?,?,?)';
+            //$usuarioLogin =\DB::select('call ObtenerUsuarioLogin(?,?,?,?,?)',array($request->co_cli,$request->email,$password,$mensaje, $mensaje));                               
+            $idTipoMovil  = 1; //  Tipo Movil  = CELULAR ANDROID
+            $respuesta = \DB::select($lcQuery,array($request->idDispositivo,$idTipoMovil,$request->co_cli));                
+            // Log::info($respuesta);  
+            
+            // if (is_null($respuesta) || empty($respuesta) ) {
+            //     # code...
+            //     return response()->json([
+            //         'success'       => 0,
+            //         'tipomensaje'   => 'BackEnd',
+            //         'mensaje'       => 'Ocurrio una Excpcion no controlada por favor contactar a soporte',
+            //         'idMovil'          => 0]);      
+                    
+                                 
 
 
-
-        $lcQuery  = 'CALL InsertarMovil (?,?,?)';
-        //$usuarioLogin =\DB::select('call ObtenerUsuarioLogin(?,?,?,?,?)',array($request->co_cli,$request->email,$password,$mensaje, $mensaje));                               
-        $idTipoMovil  = 1; //  Tipo Movil  = CELULAR ANDROID
-        $respuesta = \DB::select($lcQuery,array($request->idDispositivo,$idTipoMovil,$request->co_cli));                
-        // Log::info($respuesta);  
-        
-        if (is_null($respuesta) || empty($respuesta) ) {
-            # code...
+        } catch (\Throwable $th) {
             return response()->json([
                 'success'       => 0,
-                'tipomensaje'   => 'BackEnd',
-                'mensaje'       => 'Ocurrio una Excpcion no controlada por favor contactar a soporte',
-                'idMovil'          => 0]);                    
-        } else {
+                'tipomensaje'   => 'Danger',
+                'mensaje'       => 'Excepcion no controlada',
+                'data'          => $th
+                ]
+            ,404);               
+        }
             # code...
             // return response()->json([
-            //    'data' => $respuesta]);                    
-            return response()->json([
-                'success'       => $respuesta[0]->succes,
-                'tipomensaje'   => 'Success',
-                'mensaje'       => $respuesta[0]->mensaje,
-                'idMovil'          => $respuesta[0]->resultado]);                      
-        }                                
+            //    'data' => $respuesta]);    
+            
+        return response()->json([
+            'success'       => $respuesta[0]->succes,
+            'tipomensaje'   => 'Success',
+            'mensaje'       => $respuesta[0]->mensaje,
+            'data'       => [$respuesta[0]->resultado]
+            ]
+        ,200);             
     } 
     
     public function insertarCoordenada(Request $request)
@@ -909,8 +1170,9 @@ class AuthController extends Controller
                 return response()->json([
                     'success'       => false,
                     'tipomensaje'   => 'Danger',
-                    'mensaje'       => 'co_cli no puede estar vacio'
-                    ]);                   
+                    'mensaje'       => 'codigo de cliente no puede estar vacio'
+                    ]
+                ,404);                      
             }
     
             if (is_null($request->idDispositivo) || empty($request->idDispositivo)) {
@@ -918,23 +1180,27 @@ class AuthController extends Controller
                     'success'       => false,
                     'tipomensaje'   => 'Danger',
                     'mensaje'       => 'El identificador Del Dispositivo no puede estar vacio'
-                    ]);                   
+                    ]
+                ,404);                                         
             }
     
             if (is_null($request->latitud) || empty($request->latitud)) {
                 return response()->json([
                     'success'       => false,
                     'tipomensaje'   => 'Danger',
-                    'mensaje'       => 'latitud no puede estar vacio'
-                    ]);                   
+                    'mensaje'       => 'Latitud no puede estar vacio'
+                    ]
+                ,404);                    
             }      
             
             if (is_null($request->longitud) || empty($request->longitud)) {
+
                 return response()->json([
                     'success'       => false,
                     'tipomensaje'   => 'Danger',
-                    'mensaje'       => 'longitud no puede estar vacio'
-                    ]);                   
+                    'mensaje'       => 'Longitud no puede estar vacio'
+                    ]
+                ,404);                    
             }
             
             if (is_null($request->fecha) || empty($request->fecha)) {
@@ -942,13 +1208,13 @@ class AuthController extends Controller
                     'success'       => false,
                     'tipomensaje'   => 'Danger',
                     'mensaje'       => 'fecha de usuario no puede estar vacio'
-                    ]);                   
+                    ]
+                ,404);                      
             }           
     
             if (!is_null($request->velocidad) || !empty($request->velocidad)) {
-                // $velocidad  = $request->velocidad;    
-                Log::info($request->velocidad);   
-                
+                 $velocidad  = $request->velocidad;    
+               //  Log::info($request->velocidad);                   
             }
     
             if (!is_null($request->altura) || !empty($request->altura)) {
@@ -999,10 +1265,12 @@ class AuthController extends Controller
             );            
         } catch (\Throwable $th) {
             return response()->json([
-                'success'       => 0,
+                'success'       => false,
                 'tipomensaje'   => 'Danger',
                 'mensaje'       => 'Excepcion no controlada',
-                'data'          => $th]);  
+                'data'          => $th
+                ]
+            ,404);                
         }
 
 
@@ -1017,8 +1285,16 @@ class AuthController extends Controller
         //         'idMovil'       => 0]);                    
         // } else {
             # code...
+            // return response()->json([
+            //    'data' => $respuesta]);   
+               
             return response()->json([
-               'data' => $respuesta]);                    
+                'success'       => true,
+                'tipomensaje'   => 'Success',
+                'mensaje'       => 'Coordenada Insertada con exito',
+                'data'          => $respuesta
+                ]
+            ,200);                 
             // return response()->json([
             //     'success'       => $respuesta[0]->succes,
             //     'tipomensaje'   => 'Success',
